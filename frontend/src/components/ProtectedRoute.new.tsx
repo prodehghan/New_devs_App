@@ -7,7 +7,7 @@ interface ProtectedRouteProps {
 }
 
 export const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children }) => {
-  const { isAuthenticated, isLoading } = useAuth();
+  const { user, isAuthenticated, isLoading } = useAuth();
 
   console.log(`🛡️ [ProtectedRoute] Rendering. Loading: ${isLoading}, Authenticated: ${isAuthenticated}`);
 
@@ -22,6 +22,11 @@ export const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children }) => {
   if (!isAuthenticated) {
     console.warn('🛡️ [ProtectedRoute] Not authenticated -> Redirecting to /login');
     return <Navigate to="/login" replace />;
+  }
+
+  if (!user?.tenant_id) {
+    console.warn('🛡️ [ProtectedRoute] No tenant assigned -> Redirecting to /unauthorized');
+    return <Navigate to="/unauthorized" replace />;
   }
 
   return <>{children}</>;
